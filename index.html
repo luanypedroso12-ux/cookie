@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ferramentas de Busca e Mapas</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Ferramentas de Busca e Mapas</h1>
+        <p>Pesquise na web ou abra um mapa rapidamente. As suas preferências são salvas em cookies.</p>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="card">
+        <h2>Busca</h2>
+        <form id="search-form">
+          <label for="search-query">Digite o que procura</label>
+          <input id="search-query" type="text" placeholder="Ex: cafés perto de mim" required />
+
+          <label for="search-engine">Motor de busca</label>
+          <select id="search-engine">
+            <option value="google">Google</option>
+            <option value="bing">Bing</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="ecosia">Ecosia</option>
+          </select>
+
+          <button type="submit" class="button-primary">Pesquisar</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Mapa</h2>
+        <form id="map-form">
+          <label for="map-query">Local ou endereço</label>
+          <input id="map-query" type="text" placeholder="Ex: Avenida Paulista, São Paulo" required />
+
+          <label for="map-service">Serviço de mapas</label>
+          <select id="map-service">
+            <option value="google">Google Maps</option>
+            <option value="openstreetmap">OpenStreetMap</option>
+            <option value="bing">Bing Maps</option>
+          </select>
+
+          <button type="submit" class="button-secondary">Abrir mapa</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="status">
+      <div class="status-card">
+        <h2>Preferências salvas</h2>
+        <p id="saved-status">Nenhuma preferência salva ainda.</p>
+      </div>
+      <div class="status-card">
+        <h2>Histórico de buscas</h2>
+        <ul id="history-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
