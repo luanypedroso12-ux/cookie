@@ -1,118 +1,54 @@
-const searchForm = document.getElementById('search-form');
-const mapForm = document.getElementById('map-form');
-const searchQueryInput = document.getElementById('search-query');
-const searchEngineSelect = document.getElementById('search-engine');
-const mapQueryInput = document.getElementById('map-query');
-const mapServiceSelect = document.getElementById('map-service');
-const savedStatus = document.getElementById('saved-status');
-const historyList = document.getElementById('history-list');
+// ==========================================
+// SELEÇÃO DE ELEMENTOS DO DOM (HTML)
+// ==========================================
+// Captura os formulários e elementos da página para que o JavaScript possa interagir com eles.
+const searchForm = document.getElementById('search-form'); // Formulário de busca comum
+const mapForm = document.getElementById('map-form');       // Formulário de busca de mapas
 
+// Campos de entrada de texto (inputs)
+const searchQueryInput = document.getElementById('search-query'); // Texto da busca
+const mapQueryInput = document.getElementById('map-query');       // Texto do mapa
+
+// Menus de seleção (selects)
+const searchEngineSelect = document.getElementById('search-engine'); // Motor de busca (Google, Bing...)
+const mapServiceSelect = document.getElementById('map-service');     // Serviço de mapa (Google Maps, OSM...)
+
+// Elementos de exibição de dados na tela
+const savedStatus = document.getElementById('saved-status'); // Texto que mostra as preferências salvas
+const historyList = document.getElementById('history-list'); // Lista (<ul> ou <ol>) onde o histórico será exibido
+
+
+// ==========================================
+// FUNÇÕES DE GERENCIAMENTO DE COOKIES
+// ==========================================
+
+/**
+ * Salva uma informação (Cookie) no navegador do usuário.
+ * @param {string} name - O nome da chave do cookie.
+ * @param {string} value - O valor a ser guardado.
+ * @param {number} days - Quantidade de dias até o cookie expirar (padrão: 1 ano).
+ */
 function setCookie(name, value, days = 365) {
+  // Calcula a data de expiração. 864e5 é a notação científica para 86.400.000 milissegundos (1 dia).
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  
+  // Define o cookie. encodeURIComponent protege caracteres especiais (como espaços e acentos).
+  // 'path=/' faz com que o cookie fique acessível em todo o site.
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; 
 }
 
+/**
+ * Recupera o valor de um cookie salvo pelo nome.
+ * @param {string} name - O nome do cookie que queremos buscar.
+ * @returns {string} O valor do cookie ou uma string vazia se não existir.
+ */
 function getCookie(name) {
+  // document.cookie retorna uma string única com todos os cookies (ex: "user=John; theme=dark")
+  // .split('; ') transforma essa string em um Array de cookies individuais.
   return document.cookie.split('; ').reduce((result, cookie) => {
+    // Divide cada cookie no sinal de '=' para separar a chave do valor
     const [key, value] = cookie.split('=');
+    
+    // Se a chave for igual ao nome procurado, decodifica e retorna o valor, senão mantém o acumulador (result)
     return key === name ? decodeURIComponent(value) : result;
-  }, '');
-}
-
-function loadPreferences() {
-  const lastEngine = getCookie('searchEngine');
-  const lastMapService = getCookie('mapService');
-  const lastSearch = getCookie('lastSearch');
-  const lastMapQuery = getCookie('lastMapQuery');
-  const history = getCookie('searchHistory');
-
-  if (lastEngine) searchEngineSelect.value = lastEngine;
-  if (lastMapService) mapServiceSelect.value = lastMapService;
-  if (lastSearch) searchQueryInput.value = lastSearch;
-  if (lastMapQuery) mapQueryInput.value = lastMapQuery;
-
-  const historyItems = history ? JSON.parse(history) : [];
-  displayHistory(historyItems);
-
-  savedStatus.textContent = `Preferências: Busca = ${searchEngineSelect.options[searchEngineSelect.selectedIndex].text}, Mapas = ${mapServiceSelect.options[mapServiceSelect.selectedIndex].text}.`;
-}
-
-function displayHistory(historyItems) {
-  historyList.innerHTML = '';
-  if (!historyItems.length) {
-    historyList.innerHTML = '<li>Sem histórico ainda.</li>';
-    return;
-  }
-
-  historyItems.slice(0, 6).forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = item;
-    historyList.appendChild(li);
-  });
-}
-
-function updateHistory(value) {
-  if (!value) return;
-  const historyText = getCookie('searchHistory');
-  const historyItems = historyText ? JSON.parse(historyText) : [];
-  const normalized = value.trim();
-  if (!normalized) return;
-  const newHistory = [normalized, ...historyItems.filter(item => item !== normalized)].slice(0, 10);
-  setCookie('searchHistory', JSON.stringify(newHistory));
-  displayHistory(newHistory);
-}
-
-function getSearchUrl(engine, query) {
-  const encoded = encodeURIComponent(query);
-  switch (engine) {
-    case 'bing': return `https://www.bing.com/search?q=${encoded}`;
-    case 'duckduckgo': return `https://duckduckgo.com/?q=${encoded}`;
-    case 'ecosia': return `https://www.ecosia.org/search?q=${encoded}`;
-    default: return `https://www.google.com/search?q=${encoded}`;
-  }
-}
-
-function getMapUrl(service, query) {
-  const encoded = encodeURIComponent(query);
-  switch (service) {
-    case 'openstreetmap': return `https://www.openstreetmap.org/search?query=${encoded}`;
-    case 'bing': return `https://www.bing.com/maps?q=${encoded}`;
-    default: return `https://www.google.com/maps/search/${encoded}`;
-  }
-}
-
-searchForm.addEventListener('submit', event => {
-  event.preventDefault();
-  const query = searchQueryInput.value.trim();
-  const engine = searchEngineSelect.value;
-
-  if (!query) return;
-
-  setCookie('searchEngine', engine);
-  setCookie('lastSearch', query);
-  setCookie('lastMapQuery', mapQueryInput.value.trim());
-  setCookie('lastMapService', mapServiceSelect.value);
-  updateHistory(`Busca: ${query}`);
-  savedStatus.textContent = `Preferências salvas: ${searchEngineSelect.options[searchEngineSelect.selectedIndex].text} e ${mapServiceSelect.options[mapServiceSelect.selectedIndex].text}.`;
-
-  window.open(getSearchUrl(engine, query), '_blank');
-});
-
-mapForm.addEventListener('submit', event => {
-  event.preventDefault();
-  const query = mapQueryInput.value.trim();
-  const service = mapServiceSelect.value;
-
-  if (!query) return;
-
-  setCookie('mapService', service);
-  setCookie('lastMapQuery', query);
-  setCookie('lastSearch', searchQueryInput.value.trim());
-  setCookie('lastMapService', service);
-  updateHistory(`Mapa: ${query}`);
-  savedStatus.textContent = `Preferências salvas: ${searchEngineSelect.options[searchEngineSelect.selectedIndex].text} e ${mapServiceSelect.options[mapServiceSelect.selectedIndex].text}.`;
-
-  window.open(getMapUrl(service, query), '_blank');
-});
-
-loadPreferences();
+  },
