@@ -1,54 +1,81 @@
 // ==========================================
-// SELEÇÃO DE ELEMENTOS DO DOM (HTML)
-// ==========================================
-// Captura os formulários e elementos da página para que o JavaScript possa interagir com eles.
-const searchForm = document.getElementById('search-form'); // Formulário de busca comum
-const mapForm = document.getElementById('map-form');       // Formulário de busca de mapas
-
-// Campos de entrada de texto (inputs)
-const searchQueryInput = document.getElementById('search-query'); // Texto da busca
-const mapQueryInput = document.getElementById('map-query');       // Texto do mapa
-
-// Menus de seleção (selects)
-const searchEngineSelect = document.getElementById('search-engine'); // Motor de busca (Google, Bing...)
-const mapServiceSelect = document.getElementById('map-service');     // Serviço de mapa (Google Maps, OSM...)
-
-// Elementos de exibição de dados na tela
-const savedStatus = document.getElementById('saved-status'); // Texto que mostra as preferências salvas
-const historyList = document.getElementById('history-list'); // Lista (<ul> ou <ol>) onde o histórico será exibido
-
-
-// ==========================================
 // FUNÇÕES DE GERENCIAMENTO DE COOKIES
 // ==========================================
 
 /**
- * Salva uma informação (Cookie) no navegador do usuário.
- * @param {string} name - O nome da chave do cookie.
- * @param {string} value - O valor a ser guardado.
- * @param {number} days - Quantidade de dias até o cookie expirar (padrão: 1 ano).
+ * Cria ou atualiza um cookie no navegador.
+ *
+ * Um cookie é uma pequena informação armazenada pelo navegador
+ * que permanece disponível mesmo após recarregar a página.
+ * Neste projeto ele é usado para salvar preferências do usuário,
+ * como o mecanismo de busca ou serviço de mapas selecionado.
+ *
+ * @param {string} name - Nome (chave) do cookie.
+ * @param {string} value - Valor que será armazenado.
+ * @param {number} days - Quantidade de dias até o cookie expirar.
  */
 function setCookie(name, value, days = 365) {
-  // Calcula a data de expiração. 864e5 é a notação científica para 86.400.000 milissegundos (1 dia).
+
+  // Cria uma data de expiração para o cookie.
+  // Date.now() retorna o horário atual em milissegundos.
+  // days * 864e5 converte dias para milissegundos.
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  
-  // Define o cookie. encodeURIComponent protege caracteres especiais (como espaços e acentos).
-  // 'path=/' faz com que o cookie fique acessível em todo o site.
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; 
+
+  // Salva o cookie no navegador.
+  //
+  // Estrutura gerada:
+  // nome=valor; expires=data; path=/
+  //
+  // encodeURIComponent() evita problemas com caracteres especiais,
+  // como espaços, acentos e símbolos.
+  //
+  // path=/ permite que o cookie seja acessado em qualquer página
+  // do mesmo site.
+  document.cookie =
+    `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
 /**
- * Recupera o valor de um cookie salvo pelo nome.
- * @param {string} name - O nome do cookie que queremos buscar.
- * @returns {string} O valor do cookie ou uma string vazia se não existir.
+ * Procura e retorna o valor de um cookie específico.
+ *
+ * Exemplo:
+ * Se existirem os cookies:
+ * "tema=escuro; idioma=pt-BR"
+ *
+ * getCookie("tema") retornará "escuro".
+ *
+ * @param {string} name - Nome do cookie a ser procurado.
+ * @returns {string} Valor encontrado ou string vazia ('').
  */
 function getCookie(name) {
-  // document.cookie retorna uma string única com todos os cookies (ex: "user=John; theme=dark")
-  // .split('; ') transforma essa string em um Array de cookies individuais.
+
+  // document.cookie retorna todos os cookies em uma única string:
+  // "tema=escuro; idioma=pt-BR"
+  //
+  // split('; ') transforma essa string em um array:
+  // ["tema=escuro", "idioma=pt-BR"]
   return document.cookie.split('; ').reduce((result, cookie) => {
-    // Divide cada cookie no sinal de '=' para separar a chave do valor
+
+    // Divide cada item no sinal "="
+    //
+    // Exemplo:
+    // "tema=escuro"
+    // vira:
+    // key = "tema"
+    // value = "escuro"
     const [key, value] = cookie.split('=');
-    
-    // Se a chave for igual ao nome procurado, decodifica e retorna o valor, senão mantém o acumulador (result)
-    return key === name ? decodeURIComponent(value) : result;
-  },
+
+    // Se a chave encontrada for igual ao nome procurado,
+    // retorna o valor decodificado.
+    //
+    // decodeURIComponent() desfaz a codificação feita
+    // por encodeURIComponent() ao salvar o cookie.
+    //
+    // Caso não seja o cookie procurado,
+    // mantém o valor acumulado em "result".
+    return key === name
+      ? decodeURIComponent(value)
+      : result;
+
+  }, ''); // Valor inicial: string vazia caso o cookie não exista.
+} 

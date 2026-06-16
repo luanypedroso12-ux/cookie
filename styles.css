@@ -1,34 +1,319 @@
 /* ==========================================
-   VARIÁVEIS GLOBAIS E CONFIGURAÇÕES DO TEMA
-   ========================================== */
-/* A pseudo-classe :root representa a raiz do documento (o HTML). 
-   É o melhor lugar para declarar variáveis CSS globais que serão usadas no site todo. */
+TEMA MODERNO NEON / GLASSMORPHISM
+========================================== */
+
 :root {
-  /* Força o navegador a renderizar elementos nativos (como barras de rolagem) no modo escuro */
-  color-scheme: dark;
-  
-  /* Definição de paleta de cores usando variáveis (--nome-da-variavel) para facilitar a manutenção */
-  --bg: #0b1220;           /* Cor de fundo principal (azul escuro/quase preto) */
-  --surface: #121c34;      /* Cor para superfícies de cards em primeiro plano */
-  --surface-2: #17243b;    /* Variação de cor de superfície */
-  --text: #e8f0ff;         /* Cor principal do texto (azul bem claro) */
-  --muted: #feffff;        /* Cor para textos secundários ou menos importantes */
-  --accent: #ec6effb4;     /* Cor de destaque principal (rosa/roxo translúcido) */
-  --accent-2: #793fc6;     /* Cor de destaque secundária (roxo sólido) */
-  --border: rgba(255,255,255,.1); /* Borda branca bem suave com 10% de opacidade */
-}
 
-/* O seletor universal (*) aplica as regras a absolutamente TODOS os elementos da página */
-* {
-  /* Altera o cálculo do tamanho dos elementos. Com border-box, o padding (espaçamento interno) 
-     e a border (borda) são incluídos na largura/altura total do elemento, evitando que ele "estoure" o layout */
-  box-sizing: border-box;
-}
+/* Fundo principal */
+--bg: #090c1a;
 
+/* Cards */
+--surface: rgba(20, 25, 45, 0.75);
+--surface-2: rgba(35, 42, 75, 0.85);
+
+/* Texto */
+--text: #ffffff;
+--muted: #b9c5ff;
+
+/* Cores vibrantes */
+--pink: #ff4fd8;
+--purple: #8b5cf6;
+--blue: #38bdf8;
+--cyan: #00f5ff;
+
+/* Bordas */
+--border: rgba(255, 255, 255, 0.15);
+
+/* Sombras */
+--shadow: rgba(0, 0, 0, 0.4);
+}
 
 /* ==========================================
-   ESTILIZAÇÃO DO CORPO (BODY) E ESTRUTURA
-   ========================================== */
+BODY
+========================================== */
+
 body {
-  margin: 0;          /* Remove as margens padrão que o navegador adiciona por padrão */
-  min-height:
+
+min-height: 100vh;
+
+font-family: 'Segoe UI', sans-serif;
+
+color: var(--text);
+
+padding: 2rem;
+
+display: flex;
+justify-content: center;
+align-items: flex-start;
+
+/* Fundo degradê animado */
+background:
+radial-gradient(circle at top left, #8b5cf6 0%, transparent 30%),
+radial-gradient(circle at top right, #00f5ff 0%, transparent 25%),
+radial-gradient(circle at bottom center, #ff4fd8 0%, transparent 35%),
+#090c1a;
+
+background-attachment: fixed;
+}
+
+/* ==========================================
+CARD PRINCIPAL
+========================================== */
+
+.container {
+
+width: 100%;
+max-width:1000px;
+
+padding: 2rem;
+
+border-radius: 24px;
+
+/* Glass Effect */
+backdrop-filter: blur(15px);
+
+background: var(--surface);
+
+border: 1px solid var(--border);
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.4),
+0 0 25px rgba(139,92,246,.3);
+
+}
+
+/* ==========================================
+TÍTULOS
+========================================== */
+
+h1 {
+
+text-align: center;
+
+margin-bottom: 2rem;
+
+font-size: 2.5rem;
+
+background: linear-gradient(
+90deg,
+var(--cyan),
+var(--pink)
+);
+
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+h2 {
+
+margin-bottom: 1rem;
+
+color: var(--cyan);
+}
+
+/* ==========================================
+CARDS INTERNOS
+========================================== */
+
+.card {
+
+background: var(--surface-2);
+
+border: 1px solid var(--border);
+
+border-radius: 20px;
+
+padding: 1.5rem;
+
+margin-bottom: 1.5rem;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.25);
+
+transition: .3s ease;
+}
+
+.card:hover {
+
+transform: translateY(-5px);
+
+box-shadow:
+0 15px 35px rgba(0,0,0,.35),
+0 0 15px rgba(0,245,255,.25);
+}
+
+/* ==========================================
+FORMULÁRIOS
+========================================== */
+
+form {
+
+display: flex;
+flex-direction: column;
+
+gap: 1rem;
+}
+
+/* ==========================================
+INPUTS E SELECTS
+========================================== */
+
+input,
+select {
+
+width: 100%;
+
+padding: 14px;
+
+border-radius: 12px;
+
+border: 1px solid rgba(255,255,255,.15);
+
+background: rgba(255,255,255,.05);
+
+color: white;
+
+font-size: 1rem;
+
+transition: .3s;
+}
+
+input:focus,
+select:focus {
+
+outline: none;
+
+border-color: var(--cyan);
+
+box-shadow:
+0 0 15px rgba(0,245,255,.5);
+}
+
+/* ==========================================
+BOTÕES
+========================================== */
+
+button {
+
+padding: 14px;
+
+border: none;
+
+border-radius: 12px;
+
+font-size: 1rem;
+
+font-weight: bold;
+
+color: white;
+
+cursor: pointer;
+
+background: linear-gradient(
+135deg,
+var(--pink),
+var(--purple)
+);
+
+box-shadow:
+0 0 15px rgba(255,79,216,.4);
+
+transition: .3s;
+}
+
+button:hover {
+
+transform: translateY(-3px);
+
+box-shadow:
+0 0 25px rgba(255,79,216,.7);
+}
+
+button:active {
+
+transform: scale(.97);
+}
+
+/* ==========================================
+STATUS
+========================================== */
+
+#saved-status {
+
+background: rgba(0,245,255,.08);
+
+border: 1px solid rgba(0,245,255,.25);
+
+border-radius: 16px;
+
+padding: 1rem;
+
+margin-top: 1rem;
+}
+
+/* ==========================================
+HISTÓRICO
+========================================== */
+
+#history-list {
+
+list-style: none;
+}
+
+#history-list li {
+
+background: rgba(255,255,255,.05);
+
+padding: 14px;
+
+border-radius: 12px;
+
+margin-bottom: 10px;
+
+border-left: 4px solid var(--pink);
+
+transition: .3s;
+}
+
+#history-list li:hover {
+
+transform: translateX(6px);
+
+background: rgba(255,255,255,.08);
+}
+
+/* ==========================================
+LINKS
+========================================== */
+
+a {
+
+color: var(--cyan);
+
+text-decoration: none;
+}
+
+a:hover {
+
+color: var(--pink);
+}
+
+/* ==========================================
+RESPONSIVIDADE
+========================================== */
+
+@media (max-width: 768px) {
+
+body {
+padding: 1rem;
+}
+
+.container {
+padding: 1.5rem;
+}
+
+h1 {
+font-size: 2rem;
+}
+}
+
